@@ -1,6 +1,6 @@
 # twertch
 A _very_ simple self-hosted live streaming service.  
-It takes an RTMP input stream and transforms it into an HLS output. Also comes with a simple web player!
+It takes an [RTMP](https://en.wikipedia.org/wiki/Real-Time_Messaging_Protocol) input stream and transforms it into an [HLS](https://en.wikipedia.org/wiki/HTTP_Live_Streaming). Also comes with a simple web player!
 
 ## Disclaimer
 This project was hackily hacked together during lunchtime as a proof of concept.  
