@@ -1,0 +1,12 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#player {
+    width: 800px;
+    height: 480px;
+    margin-top: 15px;
+}
