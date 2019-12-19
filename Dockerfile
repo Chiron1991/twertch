@@ -14,9 +14,10 @@ RUN apt-get update && \
   rm -rf /tmp/foobar
 
 COPY nginx.conf /usr/local/nginx/conf/nginx.conf
+COPY hls_viewer /var/www/hls_viewer
 
 RUN ln -sf /usr/local/nginx/sbin/nginx /usr/sbin/nginx
 
 EXPOSE 1935 8080
 
-CMD ["/usr/local/nginx/sbin/nginx", "-g", "'daemon off;'"]
+CMD ["nginx"]

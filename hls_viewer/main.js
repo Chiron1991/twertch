@@ -1,24 +1,36 @@
 'use strict;'
 
-const url = 'http://localhost:4001/watch/foobar.m3u8';
-var video = document.getElementById('video');
-if(Hls.isSupported()) {
-    console.info('HLS playback is supported!')
-    var hls = new Hls();
-    hls.loadSource(url);
-    hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED,function() {
-        video.play();
-    });
+const watchButton = document.getElementById('watch-button');
+const watchStreamKey = document.getElementById('watch-streamkey');
+const player = document.getElementById('player');
+let playerHLSWrapper = null;
+
+function initHLS(sourceUrl) {
+    if (Hls.isSupported()) {
+        console.info('HLS playback is supported on your device!');
+        playerHLSWrapper = new Hls();
+        playerHLSWrapper.loadSource(sourceUrl);
+        playerHLSWrapper.attachMedia(player);
+        playerHLSWrapper.on(Hls.Events.MANIFEST_PARSED, function() { player.play(); });
+    }
+    else if (player.canPlayType('application/vnd.apple.mpegurl')) {
+        console.warn('HLS playback is not supported on your device, falling back to MPEG streaming.');
+        player.src = sourceUrl;
+        player.addEventListener('loadedmetadata', function() { player.play(); });
+    }
+    else {
+        alert('Sorry, your device does not support neither HLS oder MPEG streaming. :(')
+    }
 }
-// hls.js is not supported on platforms that do not have Media Source Extensions (MSE) enabled.
-// When the browser has built-in HLS support (check using `canPlayType`), we can provide an HLS manifest (i.e. .m3u8 URL) directly to the video element through the `src` property.
-// This is using the built-in support of the plain video element, without using hls.js.
-// Note: it would be more normal to wait on the 'canplay' event below however on Safari (where you are most likely to find built-in HLS support) the video.src URL must be on the user-driven
-// white-list before a 'canplay' event will be emitted; the last video event that can be reliably listened-for when the URL is not on the white-list is 'loadedmetadata'.
-else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-    video.src = url;
-    video.addEventListener('loadedmetadata', function() {
-        video.play();
-    });
+
+function switchPlayerSource(event) {
+    event.preventDefault();
+    const streamKey = watchStreamKey.value;
+    console.info(`Switching player source to ${streamKey}`)
+    if (playerHLSWrapper !== null) {
+        playerHLSWrapper.destroy();
+    }
+    initHLS(`${window.location}/watch/${streamKey}.m3u8`);
 }
+
+watchButton.addEventListener('click', switchPlayerSource);
